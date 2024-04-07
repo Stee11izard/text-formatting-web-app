@@ -29,6 +29,11 @@
           <input type="submit" value="Upload" class="btn btn-primary"/>
         </div>
       </form>
+      <form th:action="@{/download}" th:object="${fileForm}" method="get">
+      <div class="mt-4">
+        <input type="submit" value="Download" class="btn btn-primary"/>
+      </div>
+      </form>
       <div th:if="${success}" class="alert alert-success mt-2">
         <div th:text="${success}"/>
       </div>
@@ -55,7 +60,7 @@
         </tr>
         </thead>
         <!--      improvisation-->
-        <button class="btn btn-primary">Download</button>
+        <button href="/download" class="btn btn-primary">Download</button>
         <tbody>
         </tbody>
       </table>

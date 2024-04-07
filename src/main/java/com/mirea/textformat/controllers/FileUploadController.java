@@ -1,22 +1,21 @@
 package com.mirea.textformat.controllers;
 
 import com.mirea.textformat.model.FileForm;
+
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 public class FileUploadController {
-  MultipartFile fileTest = null; //remove
+  private FileForm customForm;
 
   @PostMapping("/upload")
   public String handleFileUpload(@ModelAttribute FileForm fileForm, Model model,
@@ -44,8 +43,9 @@ public class FileUploadController {
       redirectAttributes.addFlashAttribute("fileType", fileForm.getFile().getContentType());
       redirectAttributes.addFlashAttribute("success", "File uploaded successfully!");
 
-      fileTest = fileForm.getFile();
+      System.out.println("TEST CONTENT "+ new String(fileForm.getFile().getBytes()));
     }
+    customForm = fileForm;
     return "redirect:/home";
   }
 
@@ -87,6 +87,26 @@ public class FileUploadController {
     String sanitizedFileName = fileName.replaceAll("[" + restrictedCharacters + "]", "_");
     System.out.println(sanitizedFileName);
     return sanitizedFileName;
+  }
+
+
+  @RequestMapping(value = "/download", method = RequestMethod.GET)
+  @ResponseBody
+  public MultipartFileResource fileDownload(@ModelAttribute FileForm fileForm, Model model,
+                                            RedirectAttributes redirectAttributes) throws IOException {
+
+    MultipartFile fileTest = fileForm.getFile();
+
+    System.out.println("HELP ME NAME "+fileTest.getOriginalFilename());
+    System.out.println("HELP ME SIZE "+ fileTest.getSize());
+    System.out.println("HELP ME CONTENT "+ new String(fileTest.getBytes()));
+
+    MultipartFileResource fileResource = new MultipartFileResource(fileTest);
+
+    System.out.println("TEST NAME "+ fileResource.getFilename());
+    System.out.println("TEST CONTENT "+ new String(fileTest.getBytes()));
+
+    return fileResource;
   }
 
   @GetMapping("/home")
